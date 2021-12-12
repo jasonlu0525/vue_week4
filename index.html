@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+  <link rel="stylesheet" href="./all.css">
+
+</head>
+
+<body class="bg login-bg">
+  <div class=" container vh-100 d-flex justify-content-center align-items-center" id="app">
+    <div class="row justify-content-center w-100">
+      <div class="col-md-8 col-lg-4 bg-white rounded p-5 content-box">
+        <form class="mb-3">
+          <h1 class="fw-bold mb-3">請先登入</h1>
+
+          <div class="mb-3">
+
+            <input type="email" class="form-control" id="tEmail1" aria-describedby="email" placeholder="Email address"
+              v-model.trim="loginData.username">
+
+          </div>
+          <div class="mb-3">
+
+            <input type="password" class="form-control" id="Password" placeholder="Password"
+              v-model="loginData.password">
+          </div>
+
+          <button type="button" class="btn btn-primary w-100" @click.prevent.enter="login">登入</button>
+        </form>
+        <p class="text-center">Copyright © Formosa HealthCare. All rights reserved. </p>
+      </div>
+    </div>
+
+
+    <div v-if="success.isSuccess" class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title" id="exampleModalLabel">系統訊息</h3>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            {{success.message}} (❁´◡`❁)
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div v-if="error.isError" class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title" id="exampleModalLabel">系統訊息</h3>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <h4>{{error.message}} (╯°□°）╯︵ ┻━┻</h4>
+            <p>{{error.detailMessage}} </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+  </div>
+
+
+
+
+  </div>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"
+    integrity="sha512-u9akINsQsAkG9xjc1cnGF4zw5TFDwkxuc9vUp5dltDWYCSmyd0meygbvgXrlc/z7/o4a19Fb5V0OUE58J7dcyw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="./js/index.js" type="module"></script>
+</body>
+
+</html>

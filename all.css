@@ -1,0 +1,26 @@
+img {
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
+    object-fit: cover;
+    object-position: center;
+}
+
+.bg{
+    background-position: center;
+    background-size: cover;
+}
+
+.login-bg {
+    background-image: url(https://images.unsplash.com/photo-1586324304780-c9a5031a3599?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1920&q=80);
+  
+}
+
+.admin-bg {
+    background-image: url(https://images.unsplash.com/photo-1624220273600-d4ac00caa3a4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1920&q=90);
+   
+}
+
+.content-box {
+    box-sizing: content-box;
+}

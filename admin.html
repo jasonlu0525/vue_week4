@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+
+</head>
+
+<body>
+    <div id="app">
+        <div class="container">
+            <div class="text-end mt-4">
+                <button class="btn btn-primary" @click="showModal('#productModal')">
+                    建立新的產品
+                </button>
+            </div>
+            <table class="table mt-4">
+                <thead>
+                    <tr>
+                        <th width="120">
+                            分類
+                        </th>
+                        <th>產品名稱</th>
+                        <th width="120">
+                            原價
+                        </th>
+                        <th width="120">
+                            售價
+                        </th>
+                        <th width="100">
+                            是否啟用
+                        </th>
+                        <th width="120">
+                            編輯
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <div vif="" class=""></div>
+                    <!-- {"category":"測試分類3","content":"測試的說明3","description":"測試的描述3","id":"-MpI2uFmqdZobXcwQrqZ","imageUrl":"https://images.unsplash.com/photo-1516550135131-fe3dcb0bedc7?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=621e8231a4e714c2e85f5acbbcc6a730&auto=format&fit=crop&w=1352&q=80","imagesUrl":["https://images.unsplash.com/photo-1516627145497-ae6968895b74?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1924&q=80","https://images.unsplash.com/photo-1587300003388-59208cc962cb?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80","https://images.unsplash.com/photo-1517331156700-3c241d2b4d83?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1948&q=80","https://images.unsplash.com/photo-1617093727343-374698b1b08d?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80","https://images.unsplash.com/photo-1511914265872-c40672604a80?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1867&q=80"],"is_enabled":1,"origin_price":1000,"price":500,"title":"測試的產品3","unit":"單位3","num":1} -->
+                    <tr v-for="(item, index) in products" :key="item.id">
+                        <td> {{item.category}} </td>
+                        <td> {{item.title}} </td>
+                        <td> {{item.origin_price}} </td>
+                        <td> {{item.price}} </td>
+                        <td>
+                            <span v-if="item.is_enabled" class="text-success">啟用</span>
+                            <span v-else class="text-danger">未啟用</span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-outline-primary btn-sm"
+                                    @click="showModal('#editProductModal',item.id),injectData()">
+                                    編輯
+                                </button>
+                                <button type="button" class="btn btn-outline-danger btn-sm"
+                                    @click="showModal('#delProductModal',item.id)">
+                                    刪除
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <pagination class="mt-3" :pages-num="pagination" @change-page="$emit_pagination"></pagination>  
+            <add-product-modal :prop-add-data="addNewData" :prop-sub-product-url="subProductUrl" :form-vadidate="formVadidate"></add-product-modal>
+            <edit-product-modal  :prop-edit-data="addNewData"  :prop-sub-product-url="subProductUrl"></edit-product-modal>
+            <delete-modal @emit-delete="deletdData"></delete-modal>
+        </div>
+       
+    
+        <div class="modal fade" id="loading" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel"> {{sysTemLoader.title}} </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{sysTemLoader.message}}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+       
+    </div>
+
+
+
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.9.1/axios.min.js'
+        integrity='sha512-Xk3wWei2TGrsh9kDSBKUMIjw/86sLUvhtnv9f7fOuIwhhiUTKz8szkWkzHthrM5Bb3Bu9idSzkxOrkzhcneuiw=='
+        crossorigin='anonymous'></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"
+        integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js"
+        integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous">
+    </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/validate.js/0.13.1/validate.min.js"></script>
+    <script src="./js/admin.js" type="module"></script>
+
+</body>
+
+</html>
