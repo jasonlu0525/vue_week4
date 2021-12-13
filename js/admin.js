@@ -26,7 +26,7 @@ createApp({
                 // 新增的資料
                 addNewData: {
                     //     imageUrl: '',
-                    //   imagesUrl: []
+                      imagesUrl: []
                 },
                 errorMessage: {},
 
@@ -114,23 +114,23 @@ createApp({
             // //建立新的產品 --> 取消
             resetDataAnderrorMessage() {
                 this.addNewData = {}
-               
+
                 this.errorMessage = {}
-                this.subProductUrl = '' 
+                this.subProductUrl = ''
             },
-            // renderErrorMessage(errorMsg) {
+            renderErrorMessage(errorMsg) {
 
-            //     console.log("錯誤訊息", errorMsg);
+                console.log("錯誤訊息", errorMsg);
 
-            //     Object.keys(errorMsg).forEach((items) => {
-            //         this.errorMessage[items] = String(errorMsg[items])
+                Object.keys(errorMsg).forEach((items) => {
+                    this.errorMessage[items] = String(errorMsg[items])
 
-            //     })
+                })
 
-            //     console.log("處理", this.errorMessage);
+                console.log("處理", this.errorMessage);
 
 
-            // },
+            },
             // //建立新的產品 --> 確認
             addtDataConfirm() {
 
@@ -144,7 +144,7 @@ createApp({
                 if (!error) {
                     // 表單驗證沒有錯誤
 
-                   // this.addNewData.imagesUrl = this.subProductUrl.collection;
+                    // this.addNewData.imagesUrl = this.subProductUrl.collection;
 
                     this.products.unshift(this.addNewData)
 
@@ -152,7 +152,7 @@ createApp({
 
                     this.Axios('post', `/api/jason/admin/product`, this.addNewData)
 
-                
+
                     this.errorMessage = {}
                     this.addNewData = {}
                     // myModal.hide()
@@ -166,7 +166,7 @@ createApp({
             },
             // // 建立新的產品、編輯產品  -->新增主圖
             addMainImg(url) {
-                this.addNewData.imageUrl =url;
+                this.addNewData.imageUrl = url;
             },
             //建立新的產品、編輯產品  --> 移除主圖
             removeMainImg() {
@@ -175,11 +175,12 @@ createApp({
 
             // 建立新的產品、編輯產品  -->新增副圖
             addSubImg(url) {
-                if (url) {
+                console.log(url);
+                if (!url) {
                     return;
                 }
 
-                this.addNewData.imagesUrl.push(url)
+                this.addNewData.imagesUrl ? this.addNewData.imagesUrl.push(url) : this.addNewData.imagesUrl = [...url]
                 this.subProductUrl = "";
 
             },
@@ -188,9 +189,9 @@ createApp({
                 this.subProductUrl = SubimgUrl;
             },
             // //建立新的產品、編輯產品 -->移除副圖
-            removeSubImg() {
+            removeSubImg(subProductUrl) {
                 this.addNewData.imagesUrl.forEach((item, index, arr) => {
-                    if (this.subProductUrl === item) {
+                    if (subProductUrl === item) {
                         arr.splice(index, 1)
                         this.subProductUrl = "";
 
@@ -206,25 +207,23 @@ createApp({
                     return element.id === this.ID;
 
                 });
-console.log();
-                // 文字的 data
-                this.addNewData = injectedData[0];
 
-                //主圖
-           //     this.addNewData.mainProductUrl = this.addNewData.imageUrl;
+                // 文字的 data
+                this.addNewData = {
+                    ...injectedData[0]
+                };
+
 
                 // 副圖
-                this.subProductUrl = [...[this.addNewData.imagesUrl[0] ]];
-             console.log(this.subProductUrl );
-
-              //  this.subProductUrl.collection = [...this.addNewData.imagesUrl];
+                this.subProductUrl = this.addNewData.imagesUrl ? this.addNewData.imagesUrl[0] : '';
 
 
-                console.log('injectedData',injectedData);
+
+                console.log('subProductUrl', this.subProductUrl, );
 
             },
 
-            confirmEditData() {
+            confirmEditData(data) {
 
                 const error = this.formVadidate();
                 console.log(error);
@@ -236,12 +235,12 @@ console.log();
                 if (!error) {
                     // 表單驗證沒有錯誤
 
-                    this.addNewData.imagesUrl = this.subProductUrl.collection;
+
 
                     this.products.forEach((item, index, arr) => {
 
                         if (item.id === this.ID) {
-                            arr.splice(index, this.addNewData)
+                            arr.splice(index, data)
 
                         }
 
@@ -490,7 +489,7 @@ console.log();
     //                         <div>
 
 
-                              
+
 
     //                             <button class="btn btn-outline-danger btn-sm d-block w-100" @click="removeSubImg">
     //                                 刪除圖片
@@ -598,7 +597,7 @@ console.log();
     //         </div>
     //     </div>
     // </div>
-        
+
     //     `,
     //     created() {
     //         this.addData = this.propAddData
@@ -608,14 +607,17 @@ console.log();
     // })
     // 編輯產品 
     .component('edit-product-modal', {
-        props:['propEditData','propSubProductUrl','formVadidate'],
+        props: ['propEditData', 'propSubProductUrl', 'formVadidate'],
         data() {
             return {
-                editData:{
+                editData: {
 
                 },
-              
-                errorMessage:{}
+                subProductUrl: '',
+                tempSubProductUrl: '',
+                errorMessage: {
+
+                }
             }
         },
         template: `
@@ -655,12 +657,12 @@ console.log();
                                     <div class="form-group">
                                         <label for="imageUrl-sub--edit">新增副圖網址</label>
                                         <input id="imageUrl-sub--edit" type="text" class="form-control"
-                                            placeholder="請輸入副圖連結" v-model="subProductUrl">
+                                            placeholder="請輸入副圖連結" v-model="tempSubProductUrl">
                                     </div>
-                                    <img class="img-fluid" :src="subProductUrl" alt="">
+                                    <img class="img-fluid" :src="tempSubProductUrl" alt="">
                                 </div>
                                 <div>
-                                    <button class="btn btn-outline-primary btn-sm d-block w-100" @click="$emit('add-sub-image',subProductUrl)">
+                                    <button class="btn btn-outline-primary btn-sm d-block w-100" @click="$emit('add-sub-image',tempSubProductUrl)">
                                         新增圖片
                                     </button>
                                 </div>
@@ -672,7 +674,7 @@ console.log();
                                             @click="$emit('select-sub-image',item)"> {{item}} </li>
                                     </ol>
 
-                                    <button class="btn btn-outline-danger btn-sm d-block w-100" @click="$emit('remove-sub-image')">
+                                    <button class="btn btn-outline-danger btn-sm d-block w-100" @click="$emit('remove-sub-image',subProductUrl)">
                                         刪除圖片
                                     </button>
                                 </div>
@@ -754,7 +756,7 @@ console.log();
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"
-                                @click=" $emit('reset-data--error-message') ">
+                                @click=" $emit('reset-data--error-message'),tempSubProductUrl='',editData.imagesUrl=''">
                                 取消
                             </button>
 
@@ -766,9 +768,9 @@ console.log();
 
                             </button>
 
-                           // 資料無誤 
+                          
                             <button v-else-if="errorMessage.pass" type="button" class="btn btn-primary"
-                                @click="$emit('edit-data-confirm')" data-bs-dismiss="modal">
+                                @click="$emit('edit-data-confirm',editData)" data-bs-dismiss="modal">
                                 確認
 
                             </button>
@@ -780,13 +782,18 @@ console.log();
         </div>
         
         `,
-        
-        updated() {
-            console.log('785',this.propSubProductUrl);
-            this.editData =  this.propEditData;
-            this.subProductUrl =  this.propSubProductUrl;
-            console.log('788',this.editData, this.subProductUrl);
+        created() {
+         //   this.tempSubProductUrl = this.editData.imagesUrl ? this.editData.imagesUrl[0] : '';
         },
+        updated() {
+            console.log('785', this.propSubProductUrl);
+            this.editData = this.propEditData;
+            this.subProductUrl = this.propSubProductUrl;
+            /// test
+            this.tempSubProductUrl= this.subProductUrl
+            console.log('788', this.editData, this.subProductUrl);
+        },
+
         watch: {
             // 建立新的產品 --> 表單驗證 ---> 更新 this.errorMessage --> 切換確認按鈕 
             editData: {
@@ -817,6 +824,8 @@ console.log();
                     console.log(Object.entries(error).length === 0);
                     if (Object.entries(error).length === 0) {
                         this.errorMessage.pass = true
+                    } else {
+                        this.errorMessage.pass = false
                     }
 
 
