@@ -786,7 +786,7 @@ createApp({
          //   this.tempSubProductUrl = this.editData.imagesUrl ? this.editData.imagesUrl[0] : '';
         },
         updated() {
-            console.log('785', this.propSubProductUrl);
+           // console.log('785', this.propSubProductUrl);
             this.editData = this.propEditData;
             this.subProductUrl = this.propSubProductUrl;
             /// test
