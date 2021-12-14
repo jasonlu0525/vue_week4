@@ -8,394 +8,395 @@ let e = new bootstrap.Modal(document.querySelector('#loading'));
 
 
 createApp({
-    data() {
-        return {
-            modal: '',
-            // 分頁專用
-            pagination: {
+        data() {
+            return {
+                modal: '',
+                // 分頁專用
+                pagination: {
 
-            },
-            // 產品資料
-            products: [],
-            // axios.create 
-            userRequest: "",
+                },
+                // 產品資料
+                products: [],
+                // axios.create 
+                userRequest: "",
 
-            // 副圖網址
-            subProductUrl: '',
+                // 副圖網址
+                subProductUrl: '',
 
-            // 新增的資料
-            addNewData: {
-                //     imageUrl: '',
-                imagesUrl: []
-            },
-            errorMessage: {},
+                // 新增的資料
+                addNewData: {
+                    //     imageUrl: '',
+                    imagesUrl: []
+                },
+                errorMessage: {},
 
-            ID: '',
+                ID: '',
 
 
-            sysTemLoader: {
-                title: "",
-                message: "",
-                isSuccess: false
+                sysTemLoader: {
+                    title: "",
+                    message: "",
+                    isSuccess: false
+                }
             }
-        }
-    },
-    methods: {
-        checkLogin() {
-            const token = document.cookie.replace(/(?:(?:^|.*;\s*)userToken\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-            axios.defaults.headers.common['Authorization'] = token;
-            axios.post("https://vue3-course-api.hexschool.io/v2/api/user/check").then((res) => {
+        },
+        methods: {
+            checkLogin() {
+                const token = document.cookie.replace(/(?:(?:^|.*;\s*)userToken\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+                axios.defaults.headers.common['Authorization'] = token;
+                axios.post("https://vue3-course-api.hexschool.io/v2/api/user/check").then((res) => {
 
-                console.log(res)
-                return axios.get("https://vue3-course-api.hexschool.io/v2/api/jason/admin/products"); // Promise 鏈接
+                        console.log(res)
+                        return axios.get("https://vue3-course-api.hexschool.io/v2/api/jason/admin/products"); // Promise 鏈接
 
-            }).catch((err) => {
-                console.dir(err);
-                if (!err.data.success) {
-                    alert(err.data.message);
-                    location = "index.html"
+                    }).catch((err) => {
+                        console.dir(err);
+                        if (!err.data.success) {
+                            alert(err.data.message);
+                            location = "index.html"
+                        }
+
+                    })
+                    .then((res) => { // 驗證登入狀態後取得產品資料
+                        console.log(this);
+                        console.log(res.data.products);
+                        this.pagination = res.data.pagination
+                        this.products = res.data.products;
+
+                    })
+            },
+
+            showModal(DOM, id) {
+                new bootstrap.Modal(document.querySelector(DOM)).show();
+                id ? this.ID = id : null
+            },
+            closeModal(DOM) {
+                console.log('closed !!');
+                new bootstrap.Modal(document.querySelector(DOM)).hide();
+            },
+            Axios(method, url, config = "") {
+                console.log(url, {
+                    data: config
+                });
+                this.userRequest[method](url, {
+                    data: config
+                }).then((res) => {
+                    console.log(method, res, method, res.config.data);
+                    return axios.get("https://vue3-course-api.hexschool.io/v2/api/jason/admin/products"); // Promise 鏈接
+                }).catch((err) => {
+                    console.dir(err);
+                }).then((res) => { // 驗證登入狀態後取得產品資料
+                    console.log(res);
+                    console.log(res.data.products);
+                    this.pagination = res.data.pagination
+                    this.products = res.data.products
+                })
+            },
+
+            deletdData() {
+                console.log(this);
+                this.products.forEach((element, index) => {
+                    console.log(element.id === this.ID);
+                    if (element.id === this.ID) {
+                        console.log(element.id === this.ID);
+                        this.products.splice(index, 1)
+                    }
+
+                });
+                this.sysTemLoader.title = "刪除結果";
+                this.sysTemLoader.message = "成功 !!";
+                //  e.show();
+
+
+                this.Axios('delete', `/api/jason/admin/product/${this.ID}`)
+
+            },
+            // //建立新的產品 --> 取消
+            resetDataAnderrorMessage() {
+
+                this.addNewData = {}
+                this.errorMessage = {}
+                this.subProductUrl = ''
+            },
+            renderErrorMessage(errorMsg) {
+
+                console.log("錯誤訊息", errorMsg);
+
+                Object.keys(errorMsg).forEach((items) => {
+                    this.errorMessage[items] = String(errorMsg[items])
+
+                })
+
+                console.log("處理", this.errorMessage);
+
+
+            },
+            // //建立新的產品 --> 確認
+            addtDataConfirm() {
+
+                const error = this.formVadidate();
+                console.log(error);
+
+                //error is undefined => {} 
+                this.errorMessage = !error ? {} : error;
+
+                d.hide();
+                if (!error) {
+                    // 表單驗證沒有錯誤
+
+                    // this.addNewData.imagesUrl = this.subProductUrl.collection;
+
+                    this.products.unshift(this.addNewData)
+
+                    console.log(this.addNewData);
+
+                    this.Axios('post', `/api/jason/admin/product`, this.addNewData)
+
+
+                    this.errorMessage = {}
+                    this.addNewData = {}
+                    // myModal.hide()
+                } else {
+                    // 表單驗證有錯誤
+                    this.renderErrorMessage(error);
                 }
 
-            })
-                .then((res) => { // 驗證登入狀態後取得產品資料
-                    console.log(this);
+
+
+            },
+            // // 建立新的產品、編輯產品  -->新增主圖
+            addMainImg(url) {
+                this.addNewData.imageUrl = url;
+            },
+            //建立新的產品、編輯產品  --> 移除主圖
+            removeMainImg() {
+                this.addNewData.imageUrl = '';
+            },
+
+            // 建立新的產品、編輯產品  -->新增副圖
+            addSubImg(url) {
+                console.log(url);
+                if (!url) {
+                    return;
+                }
+                this.addNewData.imagesUrl ? this.addNewData.imagesUrl = [...this.addNewData.imagesUrl] : this.addNewData.imagesUrl = [] // 這一行不能刪 ==> 這一行是在解決點擊 增加副圖 之後 在按取消之後發生的 傳參考問題
+                this.addNewData.imagesUrl ? this.addNewData.imagesUrl.push(url) : this.addNewData.imagesUrl = []
+
+                this.subProductUrl = "";
+
+            },
+            // //建立新的產品 -->選擇副圖-->  移除副圖
+            selectSubImage(SubimgUrl) {
+                this.subProductUrl = SubimgUrl;
+            },
+            // //建立新的產品、編輯產品 -->移除副圖
+            removeSubImg(subProductUrl) {
+
+                this.addNewData.imagesUrl = [...this.addNewData.imagesUrl] // 這一行不能刪 ==> 這一行是在解決點擊  移除副圖 之後 在按取消之後發生的 傳參考問題
+                this.addNewData.imagesUrl.forEach((item, index, arr) => {
+                    if (subProductUrl === item) {
+                        arr.splice(index, 1)
+                        this.subProductUrl = "";
+
+                    }
+                })
+
+            },
+            // // 點擊編輯 ==> 帶入一筆 items 資料 以及資料處理
+            injectData() {
+                console.log('aaa');
+                let injectedData = this.products.filter((element) => {
+
+                    return element.id === this.ID;
+
+                });
+
+                // 文字的 data
+                this.addNewData = {
+                    ...injectedData[0]
+                };
+                console.log(this.addNewData, injectedData);
+                console.log(this.addNewData === injectedData[0]);
+                // 副圖
+                this.subProductUrl = this.addNewData.imagesUrl ? this.addNewData.imagesUrl[0] : '';
+
+
+
+                console.log('subProductUrl', this.subProductUrl, );
+
+            },
+
+            confirmEditData(data) {
+
+                const error = this.formVadidate();
+                console.log(error);
+
+                //error is undefined => {} 
+                this.errorMessage = !error ? {} : error;
+
+
+                if (!error) {
+                    // 表單驗證沒有錯誤
+
+
+
+                    this.products.forEach((item, index, arr) => {
+
+                        if (item.id === this.ID) {
+                            arr.splice(index, data)
+
+                        }
+
+                    })
+
+
+
+
+                    console.log(this.addNewData);
+
+                    this.Axios('put', `/api/jason/admin/product/${this.ID}`, this.addNewData)
+
+                    // var myModal = new bootstrap.Modal(document.getElementById('productModal'), {
+                    //     keyboard: false
+                    // })
+                    this.errorMessage = {}
+                    this.addNewData = {}
+                    this.subProductUrl = '';
+                    // myModal.hide()
+
+                } else {
+                    // 表單驗證有錯誤
+                    this.renderErrorMessage(error);
+                }
+
+
+            },
+            formVadidate() {
+                const constraints = {
+                    title: {
+                        presence: {
+                            message: "為必填"
+                        },
+                        length: {
+                            minimum: 4,
+                            tooShort: "^ 必須填寫 %{count} 個以上的文字"
+                        }
+                    },
+                    category: {
+                        presence: {
+                            message: "為必填",
+                        },
+                        length: {
+                            minimum: 4,
+                            tooShort: "^ 必須填寫 %{count} 個以上的文字"
+                        }
+                    },
+                    unit: {
+                        presence: {
+                            message: "為必填"
+                        },
+                        length: {
+                            minimum: 1
+                        }
+                    },
+                    origin_price: {
+                        presence: {
+                            message: "為必填"
+                        },
+                        numericality: {
+                            greaterThanOrEqualTo: 0,
+                            message: "^需要填入大於0的數字 "
+                        }
+                    },
+                    price: {
+                        presence: {
+                            message: "為必填"
+                        },
+                        numericality: {
+                            greaterThanOrEqualTo: 0,
+                            message: "^需要填入大於0的數字 "
+                        }
+                    }
+                }
+
+                return validate({
+                    title: this.addNewData.title,
+                    category: this.addNewData.category,
+                    unit: this.addNewData.unit,
+                    origin_price: this.addNewData.origin_price,
+                    price: this.addNewData.price,
+
+                }, constraints);
+            },
+            // 分頁模組 換頁功能 
+            $emit_pagination(pageNum) {
+                console.log("換頁 !", pageNum);
+                this.userRequest.get(`/api/jason/admin/products?page=${pageNum}`).then((res) => {
+                    console.log(res);
                     console.log(res.data.products);
                     this.pagination = res.data.pagination
                     this.products = res.data.products;
-
+                }).catch((err) => {
+                    console.log(err);
                 })
-        },
-
-        showModal(DOM, id) {
-            new bootstrap.Modal(document.querySelector(DOM)).show();
-            id ? this.ID = id : null
-        },
-        closeModal(DOM) {
-            console.log('closed !!');
-            new bootstrap.Modal(document.querySelector(DOM)).hide();
-        },
-        Axios(method, url, config = "") {
-            console.log(url, {
-                data: config
-            });
-            this.userRequest[method](url, {
-                data: config
-            }).then((res) => {
-                console.log(method, res, method, res.config.data);
-                return axios.get("https://vue3-course-api.hexschool.io/v2/api/jason/admin/products"); // Promise 鏈接
-            }).catch((err) => {
-                console.dir(err);
-            }).then((res) => { // 驗證登入狀態後取得產品資料
-                console.log(res);
-                console.log(res.data.products);
-                this.pagination = res.data.pagination
-                this.products = res.data.products
-            })
-        },
-
-        deletdData() {
-            console.log(this);
-            this.products.forEach((element, index) => {
-                console.log(element.id === this.ID);
-                if (element.id === this.ID) {
-                    console.log(element.id === this.ID);
-                    this.products.splice(index, 1)
-                }
-
-            });
-            this.sysTemLoader.title = "刪除結果";
-            this.sysTemLoader.message = "成功 !!";
-            //  e.show();
-
-
-            this.Axios('delete', `/api/jason/admin/product/${this.ID}`)
-
-        },
-        // //建立新的產品 --> 取消
-        resetDataAnderrorMessage() {
-
-            this.addNewData = {}
-            this.errorMessage = {}
-            this.subProductUrl = ''
-        },
-        renderErrorMessage(errorMsg) {
-
-            console.log("錯誤訊息", errorMsg);
-
-            Object.keys(errorMsg).forEach((items) => {
-                this.errorMessage[items] = String(errorMsg[items])
-
-            })
-
-            console.log("處理", this.errorMessage);
-
-
-        },
-        // //建立新的產品 --> 確認
-        addtDataConfirm() {
-
-            const error = this.formVadidate();
-            console.log(error);
-
-            //error is undefined => {} 
-            this.errorMessage = !error ? {} : error;
-
-            d.hide();
-            if (!error) {
-                // 表單驗證沒有錯誤
-
-                // this.addNewData.imagesUrl = this.subProductUrl.collection;
-
-                this.products.unshift(this.addNewData)
-
-                console.log(this.addNewData);
-
-                this.Axios('post', `/api/jason/admin/product`, this.addNewData)
-
-
-                this.errorMessage = {}
-                this.addNewData = {}
-                // myModal.hide()
-            } else {
-                // 表單驗證有錯誤
-                this.renderErrorMessage(error);
-            }
-
-
-
-        },
-        // // 建立新的產品、編輯產品  -->新增主圖
-        addMainImg(url) {
-            this.addNewData.imageUrl = url;
-        },
-        //建立新的產品、編輯產品  --> 移除主圖
-        removeMainImg() {
-            this.addNewData.imageUrl = '';
-        },
-
-        // 建立新的產品、編輯產品  -->新增副圖
-        addSubImg(url) {
-            console.log(url);
-            if (!url) {
-                return;
-            }
-            this.addNewData.imagesUrl ? this.addNewData.imagesUrl = [...this.addNewData.imagesUrl] : this.addNewData.imagesUrl = [] // 這一行不能刪 ==> 這一行是在解決點擊 增加副圖 之後 在按取消之後發生的 傳參考問題
-            this.addNewData.imagesUrl ? this.addNewData.imagesUrl.push(url) : this.addNewData.imagesUrl = []
-
-            this.subProductUrl = "";
-
-        },
-        // //建立新的產品 -->選擇副圖-->  移除副圖
-        selectSubImage(SubimgUrl) {
-            this.subProductUrl = SubimgUrl;
-        },
-        // //建立新的產品、編輯產品 -->移除副圖
-        removeSubImg(subProductUrl) {
-
-            this.addNewData.imagesUrl = [...this.addNewData.imagesUrl]  // 這一行不能刪 ==> 這一行是在解決點擊  移除副圖 之後 在按取消之後發生的 傳參考問題
-            this.addNewData.imagesUrl.forEach((item, index, arr) => {
-                if (subProductUrl === item) {
-                    arr.splice(index, 1)
-                    this.subProductUrl = "";
-
-                }
-            })
-
-        },
-        // // 點擊編輯 ==> 帶入一筆 items 資料 以及資料處理
-        injectData() {
-            console.log('aaa');
-            let injectedData = this.products.filter((element) => {
-
-                return element.id === this.ID;
-
-            });
-
-            // 文字的 data
-            this.addNewData = {
-                ...injectedData[0]
-            };
-            console.log(this.addNewData, injectedData);
-            console.log(this.addNewData === injectedData[0]);
-            // 副圖
-            this.subProductUrl = this.addNewData.imagesUrl ? this.addNewData.imagesUrl[0] : '';
-
-
-
-            console.log('subProductUrl', this.subProductUrl,);
-
-        },
-
-        confirmEditData(data) {
-
-            const error = this.formVadidate();
-            console.log(error);
-
-            //error is undefined => {} 
-            this.errorMessage = !error ? {} : error;
-
-
-            if (!error) {
-                // 表單驗證沒有錯誤
-
-
-
-                this.products.forEach((item, index, arr) => {
-
-                    if (item.id === this.ID) {
-                        arr.splice(index, data)
-
-                    }
-
-                })
-
-
-
-
-                console.log(this.addNewData);
-
-                this.Axios('put', `/api/jason/admin/product/${this.ID}`, this.addNewData)
-
-                // var myModal = new bootstrap.Modal(document.getElementById('productModal'), {
-                //     keyboard: false
-                // })
-                this.errorMessage = {}
-                this.addNewData = {}
-                // myModal.hide()
-
-            } else {
-                // 表單驗證有錯誤
-                this.renderErrorMessage(error);
-            }
-
-
-        },
-        formVadidate() {
-            const constraints = {
-                title: {
-                    presence: {
-                        message: "為必填"
-                    },
-                    length: {
-                        minimum: 4,
-                        tooShort: "^ 必須填寫 %{count} 個以上的文字"
-                    }
-                },
-                category: {
-                    presence: {
-                        message: "為必填",
-                    },
-                    length: {
-                        minimum: 4,
-                        tooShort: "^ 必須填寫 %{count} 個以上的文字"
-                    }
-                },
-                unit: {
-                    presence: {
-                        message: "為必填"
-                    },
-                    length: {
-                        minimum: 1
-                    }
-                },
-                origin_price: {
-                    presence: {
-                        message: "為必填"
-                    },
-                    numericality: {
-                        greaterThanOrEqualTo: 0,
-                        message: "^需要填入大於0的數字 "
-                    }
-                },
-                price: {
-                    presence: {
-                        message: "為必填"
-                    },
-                    numericality: {
-                        greaterThanOrEqualTo: 0,
-                        message: "^需要填入大於0的數字 "
-                    }
-                }
-            }
-
-            return validate({
-                title: this.addNewData.title,
-                category: this.addNewData.category,
-                unit: this.addNewData.unit,
-                origin_price: this.addNewData.origin_price,
-                price: this.addNewData.price,
-
-            }, constraints);
-        },
-        // 分頁模組 換頁功能 
-        $emit_pagination(pageNum) {
-            console.log("換頁 !", pageNum);
-            this.userRequest.get(`/api/jason/admin/products?page=${pageNum}`).then((res) => {
-                console.log(res);
-                console.log(res.data.products);
-                this.pagination = res.data.pagination
-                this.products = res.data.products;
-            }).catch((err) => {
-                console.log(err);
-            })
-        },
-        $emit_deletdData() {
-
-        }
-
-    },
-    watch: {
-        // 建立新的產品 --> 表單驗證 ---> 更新 this.errorMessage --> 切換確認按鈕 
-        addNewData: {
-            handler(newValue, oldValue) {
-
-                //  console.log('wateched !!!', newValue, oldValue);
-                const error = this.formVadidate() || {};
-                console.log(error);
-
-                this.errorMessage = {}
-
-
-                Object.keys(error).forEach((items) => {
-                    console.log(this.addNewData[items]);
-                    // 按下確認前，輸入 input 事件的驗證，
-                    // this.addNewData[items] !== undefined ==> input 有輸入值
-                    // this.addNewData[items] === ''
-                    //
-                    if (this.addNewData[items] !== undefined || this.addNewData[items] === '') {
-                        console.log(this.addNewData[items], 1);
-                        this.errorMessage[items] = String(error[items])
-                        console.log('  this.errorMessage', this.errorMessage);
-
-                    }
-
-
-                })
-                console.log(Object.entries(error).length === 0);
-                if (Object.entries(error).length === 0) {
-                    this.errorMessage.pass = true
-                }
-
-
             },
-            deep: true,
-            immediate: false
+            $emit_deletdData() {
 
-        }
-    },
+            }
 
-    created() {
-        this.checkLogin();
-        this.userRequest = axios.create({
-            baseURL: 'https://vue3-course-api.hexschool.io/v2',
+        },
+        watch: {
+            // 建立新的產品 --> 表單驗證 ---> 更新 this.errorMessage --> 切換確認按鈕 
+            addNewData: {
+                handler(newValue, oldValue) {
 
-        })
-        console.log(this.sysTemLoader);
+                    //  console.log('wateched !!!', newValue, oldValue);
+                    const error = this.formVadidate() || {};
+                    console.log(error);
 
-    },
+                    this.errorMessage = {}
 
 
-})
+                    Object.keys(error).forEach((items) => {
+                        console.log(this.addNewData[items]);
+                        // 按下確認前，輸入 input 事件的驗證，
+                        // this.addNewData[items] !== undefined ==> input 有輸入值
+                        // this.addNewData[items] === ''
+                        //
+                        if (this.addNewData[items] !== undefined || this.addNewData[items] === '') {
+                            console.log(this.addNewData[items], 1);
+                            this.errorMessage[items] = String(error[items])
+                            console.log('  this.errorMessage', this.errorMessage);
+
+                        }
+
+
+                    })
+                    console.log(Object.entries(error).length === 0);
+                    if (Object.entries(error).length === 0) {
+                        this.errorMessage.pass = true
+                    }
+
+
+                },
+                deep: true,
+                immediate: false
+
+            }
+        },
+
+        created() {
+            this.checkLogin();
+            this.userRequest = axios.create({
+                baseURL: 'https://vue3-course-api.hexschool.io/v2',
+
+            })
+            console.log(this.sysTemLoader);
+
+        },
+
+
+    })
     // 換頁元件
     .component('pagination', {
 
@@ -782,7 +783,7 @@ createApp({
 
                           
                             <button v-else-if="errorMessage.pass" type="button" class="btn btn-primary"
-                                @click="$emit('edit-data-confirm',editData)" data-bs-dismiss="modal">
+                                @click="$emit('edit-data-confirm',editData),subProductUrl=''" data-bs-dismiss="modal">
                                 確認
 
                             </button>
@@ -794,7 +795,9 @@ createApp({
         </div>
         
         `,
-
+        created() {
+            this.subProductUrl ='';
+        },
         updated() {
             // console.log('785', this.propSubProductUrl);
             this.editData = this.propEditData;
@@ -894,9 +897,3 @@ createApp({
                                 // </ol>
  
 */
-
-
-
-
-
-
