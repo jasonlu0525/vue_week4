@@ -17,7 +17,7 @@ createApp({
                 },
                 // 產品資料
                 products: [],
-                // axios.create 
+                // axios.create
                 userRequest: "",
 
                 // 副圖網址
@@ -149,7 +149,7 @@ createApp({
                 const error = this.formVadidate();
                 console.log(error);
 
-                //error is undefined => {} 
+                //error is undefined => {}
                 this.errorMessage = !error ? {} : error;
 
                 d.hide();
@@ -244,7 +244,7 @@ createApp({
                 const error = this.formVadidate();
                 console.log(error);
 
-                //error is undefined => {} 
+                //error is undefined => {}
                 this.errorMessage = !error ? {} : error;
 
 
@@ -341,7 +341,7 @@ createApp({
 
                 }, constraints);
             },
-            // 分頁模組 換頁功能 
+            // 分頁模組 換頁功能
             $emit_pagination(pageNum) {
                 console.log("換頁 !", pageNum);
                 this.userRequest.get(`/api/jason/admin/products?page=${pageNum}`).then((res) => {
@@ -358,45 +358,45 @@ createApp({
             }
 
         },
-        watch: {
-            // 建立新的產品 --> 表單驗證 ---> 更新 this.errorMessage --> 切換確認按鈕 
-            addNewData: {
-                handler(newValue, oldValue) {
+        // watch: {
+        //     // 建立新的產品 --> 表單驗證 ---> 更新 this.errorMessage --> 切換確認按鈕
+        //     addNewData: {
+        //         handler(newValue, oldValue) {
 
-                    //  console.log('wateched !!!', newValue, oldValue);
-                    const error = this.formVadidate() || {};
-                    console.log(error);
+        //             //  console.log('wateched !!!', newValue, oldValue);
+        //             const error = this.formVadidate() || {};
+        //             console.log(error);
 
-                    this.errorMessage = {}
-
-
-                    Object.keys(error).forEach((items) => {
-                        console.log(this.addNewData[items]);
-                        // 按下確認前，輸入 input 事件的驗證，
-                        // this.addNewData[items] !== undefined ==> input 有輸入值
-                        // this.addNewData[items] === ''
-                        //
-                        if (this.addNewData[items] !== undefined || this.addNewData[items] === '') {
-                            console.log(this.addNewData[items], 1);
-                            this.errorMessage[items] = String(error[items])
-                            console.log('  this.errorMessage', this.errorMessage);
-
-                        }
+        //             this.errorMessage = {}
 
 
-                    })
-                    console.log(Object.entries(error).length === 0);
-                    if (Object.entries(error).length === 0) {
-                        this.errorMessage.pass = true
-                    }
+        //             Object.keys(error).forEach((items) => {
+        //                 console.log(this.addNewData[items]);
+        //                 // 按下確認前，輸入 input 事件的驗證，
+        //                 // this.addNewData[items] !== undefined ==> input 有輸入值
+        //                 // this.addNewData[items] === ''
+        //                 //
+        //                 if (this.addNewData[items] !== undefined || this.addNewData[items] === '') {
+        //                     console.log(this.addNewData[items], 1);
+        //                     this.errorMessage[items] = String(error[items])
+        //                     console.log('  this.errorMessage', this.errorMessage);
+
+        //                 }
 
 
-                },
-                deep: true,
-                immediate: false
+        //             })
+        //             console.log(Object.entries(error).length === 0);
+        //             if (Object.entries(error).length === 0) {
+        //                 this.errorMessage.pass = true
+        //             }
 
-            }
-        },
+
+        //         },
+        //         deep: true,
+        //         immediate: false
+
+        //     }
+        // },
 
         created() {
             this.checkLogin();
@@ -437,7 +437,7 @@ createApp({
         </ul>`
 
     })
-    // 新增產品 
+    // 新增產品
     .component('add-product-modal', {
         props: ['propAddData', 'propSubProductUrl', 'propErrorMessage', 'formVadidate'],
         data() {
@@ -552,7 +552,7 @@ createApp({
                                                 placeholder="請輸入原價" v-model="addData.origin_price"
                                                 name="origin_price">
                                             <p class="text-danger">
-                                          
+
                                                 {{ errorMessage.origin_price }}
                                             </p>
                                         </div>
@@ -595,7 +595,7 @@ createApp({
                                 取消
                             </button>
 
-                          
+
 
                             <button v-if="!errorMessage.pass" type="button" class="btn btn-primary"
                                 @click="$emit('add-data-confirm')">
@@ -603,37 +603,35 @@ createApp({
 
                             </button>
 
-                          
+
                             <button v-else-if="errorMessage.pass" type="button" class="btn btn-primary"
                                 @click="$emit('add-data-confirm',addData),subProductUrl=''" data-bs-dismiss="modal">
                                 確認
 
                             </button>
-                            
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         `,
-        beforeUpdate() {
-           this.addData = this.propAddData;
-        },
+
         created() {
             this.subProductUrl = '';
             this.addData = this.propAddData;
-        
+
         },
         updated() {
-   this.errorMessage =  this.propErrorMessage;
-           // this.errorMessage = this.errorMessage
+            // this.errorMessage =  this.propErrorMessage;
+            // this.errorMessage = this.errorMessage
             console.log('788', this.editData, this.subProductUrl);
 
         },
 
         watch: {
-            // 建立新的產品 --> 表單驗證 ---> 更新 this.errorMessage --> 切換確認按鈕 
+            // 建立新的產品 --> 表單驗證 ---> 更新 this.errorMessage --> 切換確認按鈕
             addData: {
                 handler(newValue, oldValue) {
                     console.log(newValue, oldValue);
@@ -643,25 +641,31 @@ createApp({
 
                     this.errorMessage = {}
                     console.log();
-                 console.log( Object.keys(newValue),error);
-                    // Object.keys(newValue).forEach((i, index, arr) => {
-                    //     console.log(newValue[i], "|", error[i]);
-                    //  this.errorMessage[i] = String (error[i])  ;
-                    // });
-
+                    console.log(Object.keys(newValue), error);
+               
+                 
                     Object.keys(newValue).forEach((element, index, arr) => {
                         console.log(newValue[element], "|", error[element]);
                         console.log(Boolean(newValue[element]));
-                        if (newValue[element] !== "" && error[element]) {
+
+
+                        // this.errorMessage[element] = ""
+                        if (newValue[element] !== "" && error[element] === undefined) {
+                            // 如果 表單有填值 且 表單驗證沒有錯誤
+                            this.errorMessage[element] = ""
+                          
+                        } else if (newValue[element] !== '' && error[element]) {
                             // 如果 表單有填值 且 表單驗證有錯誤
                             this.errorMessage[element] = String(error[element])
-                        } else if (newValue[element] === '') {
-                            // 如果 表單原本有填值，但把內容清空
-                            this.errorMessage[element] = ''
-                        } else {
-                            // 如果表單沒有錯誤，就將該欄位清空
-                            this.errorMessage[element] = ''
+                        
                         }
+
+                      
+
+                        // else {
+                        //     // 如果表單沒有錯誤，就將該欄位清空
+                        //     this.errorMessage[element] = ''
+                        // }
 
                     });
 
@@ -684,15 +688,15 @@ createApp({
                     this.subProductUrl = this.propSubProductUrl
                 }
             },
-            errorMessage: {
-                handler() {
-                  this.errorMessage = this.propErrorMessage
-                },   deep: true,
-                immediate: false
-            }
+            // errorMessage: {
+            //     handler() {
+            //       this.errorMessage = this.propErrorMessage
+            //     },   deep: true,
+            //     immediate: false
+            // }
         }
     })
-    // 編輯產品 
+    // 編輯產品
     .component('edit-product-modal', {
         props: ['propEditData', 'propSubProductUrl', 'formVadidate'],
         data() {
@@ -811,7 +815,7 @@ createApp({
                                                 placeholder="請輸入原價" v-model="editData.origin_price"
                                                 name="origin_price">
                                             <p class="text-danger">
-                                          
+
                                                 {{ errorMessage.origin_price }}
                                             </p>
                                         </div>
@@ -854,7 +858,7 @@ createApp({
                                 取消
                             </button>
 
-                          
+
 
                             <button v-if="!errorMessage.pass" type="button" class="btn btn-primary"
                                 @click="$emit('edit-data-confirm')">
@@ -862,19 +866,19 @@ createApp({
 
                             </button>
 
-                          
+
                             <button v-else-if="errorMessage.pass" type="button" class="btn btn-primary"
                                 @click="$emit('edit-data-confirm',editData),subProductUrl=''" data-bs-dismiss="modal">
                                 確認
 
                             </button>
-                            
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         `,
         created() {
             this.subProductUrl = '';
@@ -884,7 +888,7 @@ createApp({
             console.log('788', this.editData, this.subProductUrl);
         },
         watch: {
-            // 建立新的產品 --> 表單驗證 ---> 更新 this.errorMessage --> 切換確認按鈕 
+            // 建立新的產品 --> 表單驗證 ---> 更新 this.errorMessage --> 切換確認按鈕
             editData: {
                 handler(newValue, oldValue) {
                     //  console.log('wateched !!!', newValue, oldValue);
