@@ -25,8 +25,20 @@ createApp({
 
                 // 新增的資料
                 addNewData: {
-                    //     imageUrl: '',
-                    imagesUrl: []
+
+                    "category": "",
+                    "content": "",
+                    "description": "",
+                    "id": "",
+                    "imageUrl": "",
+                    "imagesUrl": [],
+                    "is_enabled": 0,
+                    "num": '',
+                    "origin_price": '',
+                    "price": '',
+                    "title": '',
+                    "unit": ''
+
                 },
                 errorMessage: {},
 
@@ -213,7 +225,8 @@ createApp({
 
                 // 文字的 data
                 this.addNewData = {
-                    ...injectedData[0]
+                    ...injectedData[0],
+                    //     imageUrl:''
                 };
                 console.log(this.addNewData, injectedData);
                 console.log(this.addNewData === injectedData[0]);
@@ -424,207 +437,275 @@ createApp({
         </ul>`
 
     })
-    // 新增產品 元件
-    // .component('add-product-modal', {
-    //     props: ['propAddData', 'propSubProductUrl', 'form-vadidate'],
-    //     data() {
-    //         return {
-    //             addData: {
-    //                 // imageUrl: '',
-    //                 // title: '',
-    //                 // imagesUrl: [],
-    //                 // price:0
-    //             },
-    //             errorMessage: {
-    //                 // title: '',
-    //                 // category: '',
-    //                 // unit: '',
-    //                 // origin_price: '',
-    //                 // price: '',
-    //             }
-    //         }
-    //     },
-    //     template: `
-    //     <div id="productModal" ref="productModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false"
-    //     tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
-    //     <div class="modal-dialog modal-xl">
-    //         <div class="modal-content border-0">
-    //             <div class="modal-header bg-dark text-white">
-    //                 <h5 id="productModalLabel" class="modal-title">
-    //                     <span>新增產品</span>
-    //                 </h5>
-    //                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    //             </div>
-    //             <div class="modal-body">
-    //                 <div class="row">
-    //                     <div class="col-sm-4">
-    //                         <div class="mb-1">
-    //                             <div class="form-group">
-    //                                 <label for="imageUrl-main">新增主圖網址</label>
-    //                                 <input id="imageUrl-main" type="text" class="form-control" placeholder="請輸入主圖連結"
-    //                                     v-model="addData.imageUrl">
-    //                             </div>
-    //                             <img class="img-fluid" :src="addData.imageUrl" alt="">
-    //                         </div>
-    //                         <div>
-    //                             <button class="btn btn-outline-primary btn-sm d-block w-100" @click="addMainImg">
-    //                                 新增圖片
-    //                             </button>
-    //                         </div>
-    //                         <div class="mb-3">
-    //                             <button class="btn btn-outline-danger btn-sm d-block w-100" @click="removeMainImg">
-    //                                 刪除圖片
-    //                             </button>
-    //                         </div>
+    // 新增產品 
+    .component('add-product-modal', {
+        props: ['propAddData', 'propSubProductUrl', 'propErrorMessage', 'formVadidate'],
+        data() {
+            return {
+                addData: {
 
-    //                         <div class="mb-1">
-    //                             <div class="form-group">
-    //                                 <label for="imageUrl-sub">新增副圖網址</label>
-    //                                 <input id="imageUrl-sub" type="text" class="form-control" placeholder="請輸入副圖連結"
-    //                                     v-model="subProductUrl">
-    //                             </div>
-    //                             <img class="img-fluid" :src="subProductUrl" alt="">
-    //                         </div>
-    //                         <div>
-    //                             <button class="btn btn-outline-primary btn-sm d-block w-100" @click="addSubImg">
-    //                                 新增圖片
-    //                             </button>
-    //                         </div>
-    //                         <div>
+                },
+                subProductUrl: '',
+                errorMessage: {
+
+                }
+            }
+            //   this.addData = this.propaddData;
+            //   this.subProductUrl = this.propSubProductUrl;
+            /// test
+            // this.tempSubProductUrl= this.subProductUrl
+        },
+        template: `
+        <div id="addProductModal" ref="productModal" class="modal fade" data-bs-backdrop="static"
+            data-bs-keyboard="false" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content border-0">
+                    <div class="modal-header bg-dark text-white">
+                        <h5 id="productModalLabel" class="modal-title">
+                            <span>新增產品</span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="mb-1">
+                                    <div class="form-group">
+                                        <label for="imageUrl-main--edit">新增主圖網址</label>
+                                        <input id="imageUrl-main--edit" type="text" class="form-control"
+                                            placeholder="請輸入主圖連結" v-model="addData.imageUrl">
+                                    </div>
+                                    <img class="img-fluid" :src="addData.imageUrl" alt="">
+                                </div>
+                                <div>
+                                    <button class="btn btn-outline-primary btn-sm d-block w-100" @click="$emit('add-image',addData.imageUrl) ">
+                                        新增圖片
+                                    </button>
+                                </div>
+                                <div class="mb-3">
+                                    <button class="btn btn-outline-danger btn-sm d-block w-100" @click="$emit('remove-image',addData.imageUrl)">
+                                        刪除圖片
+                                    </button>
+                                </div>
+
+                                <div class="mb-1">
+                                    <div class="form-group">
+                                        <label for="imageUrl-sub--edit">新增副圖網址</label>
+                                        <input id="imageUrl-sub--edit" type="text" class="form-control"
+                                            placeholder="請輸入副圖連結" v-model="subProductUrl">
+                                    </div>
+                                    <img class="img-fluid" :src="subProductUrl" alt="">
+                                </div>
+                                <div>
+                                    <button class="btn btn-outline-primary btn-sm d-block w-100" @click="$emit('add-sub-image',subProductUrl)">
+                                        新增圖片
+                                    </button>
+                                </div>
+                                <div>
 
 
+                                    <ol class="overflow-auto">
+                                        <li v-for="(item, index) in addData.imagesUrl" :key="index"
+                                            @click="$emit('select-sub-image',item)"> {{item}} </li>
+                                    </ol>
+
+                                    <button class="btn btn-outline-danger btn-sm d-block w-100" @click="$emit('remove-sub-image',subProductUrl)">
+                                        刪除圖片
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="form-group">
+                                    <label for="title--edit">標題</label>c
+                                    <input id="title--edit" type="text" class="form-control" placeholder="請輸入標題"
+                                        v-model="addData.title" name="title">
+                                    <p class="text-danger">
+                                        {{ errorMessage.title }}
+                                    </p>
 
 
-    //                             <button class="btn btn-outline-danger btn-sm d-block w-100" @click="removeSubImg">
-    //                                 刪除圖片
-    //                             </button>
-    //                         </div>
-    //                     </div>
-    //                     <div class="col-sm-8">
-    //                         <div class="form-group">
-    //                             <label for="title">標題</label>
-    //                             <input id="title" type="text" class="form-control" placeholder="請輸入標題"
-    //                                 v-model="addData.title" name="title">
-    //                             <p class="text-danger">
-    //                                 {{ errorMessage.title }}
-    //                             </p>
-
-
-    //                             <div class="row">
-    //                                 <div class="form-group col-md-6">
-    //                                     <label for="category">分類</label>
-    //                                     <input id="category" type="text" class="form-control" placeholder="請輸入分類"
-    //                                         v-model="addData.category" name="category">
-    //                                     <p class="text-danger">
-    //                                         {{  errorMessage.category  }}
-    //                                     </p>
-    //                                 </div>
-    //                                 <div class="form-group col-md-6">
-    //                                     <label for="unit">單位</label>
-    //                                     <input id="unit" type="text" class="form-control" placeholder="請輸入單位"
-    //                                         v-model="addData.unit" name="unit">
-    //                                     <p class="text-danger">
-    //                                         {{ errorMessage.unit }}
-    //                                     </p>
-    //                                 </div>
-    //                             </div>
+                                    <div class="row">
+                                        <div class="form-group col-md-6">
+                                            <label for="category--edit">分類</label>
+                                            <input id="category--edit" type="text" class="form-control"
+                                                placeholder="請輸入分類" v-model="addData.category" name="category">
+                                            <p class="text-danger">
+                                                {{  errorMessage.category  }}
+                                            </p>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="unit--edit">單位</label>
+                                            <input id="unit--edit" type="text" class="form-control" placeholder="請輸入單位"
+                                                v-model="addData.unit" name="unit">
+                                            <p class="text-danger">
+                                                {{ errorMessage.unit }}
+                                            </p>
+                                        </div>
+                                    </div>
 
 
 
-    //                             <div class="row">
-    //                                 <div class="form-group col-md-6">
-    //                                     <label for="origin_price">原價</label>
-    //                                     <input id="origin_price" type="number" min="0" class="form-control"
-    //                                         placeholder="請輸入原價" v-model="addData.origin_price"
-    //                                         name="origin_price">
-    //                                     <p class="text-danger">
-    //                                         <!--   {{ errorMessage.origin_price !== undefined && addNewData.origin_price  !== undefined  ?  errorMessage.origin_price  +"" : errorMessage.origin_price !== undefined  ? errorMessage.origin_price+""   :''  }} -->
-    //                                         {{ errorMessage.origin_price }}
-    //                                     </p>
-    //                                 </div>
-    //                                 <div class="form-group col-md-6">
-    //                                     <label for="price">售價</label>
-    //                                     <input id="price" type="number" min="0" class="form-control"
-    //                                         placeholder="請輸入售價" v-model="addData.price" name="price">
-    //                                     <p class="text-danger">
-    //                                         {{  errorMessage.price }}
-    //                                     </p>
-    //                                 </div>
-    //                             </div>
-    //                             <hr>
+                                    <div class="row">
+                                        <div class="form-group col-md-6">
+                                            <label for="origin_price--edit">原價</label>
+                                            <input id="origin_price--edit" type="number" min="0" class="form-control"
+                                                placeholder="請輸入原價" v-model="addData.origin_price"
+                                                name="origin_price">
+                                            <p class="text-danger">
+                                          
+                                                {{ errorMessage.origin_price }}
+                                            </p>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="price--edit">售價</label>
+                                            <input id="price--edit" type="number" min="0" class="form-control"
+                                                placeholder="請輸入售價" v-model="addData.price" name="price">
+                                            <p class="text-danger">
+                                                {{  errorMessage.price }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <hr>
 
-    //                             <div class="form-group">
-    //                                 <label for="description">產品描述</label>
-    //                                 <textarea id="description" type="text" class="form-control"
-    //                                     placeholder="請輸入產品描述" v-model="addData.description">
-    //          </textarea>
-    //                             </div>
-    //                             <div class="form-group">
-    //                                 <label for="content">說明內容</label>
-    //                                 <textarea id="content" type="text" class="form-control" placeholder="請輸入說明內容"
-    //                                     v-model="addData.content">
-    //          </textarea>
-    //                             </div>
-    //                             <div class="form-group">
-    //                                 <div class="form-check">
-    //                                     <input id="is_enabled" class="form-check-input" type="checkbox"
-    //                                         :true-value="1" :false-value="0" v-model="addData.is_enabled">
-    //                                     <label class="form-check-label" for="is_enabled">是否啟用</label>
-    //                                 </div>
-    //                             </div>
-    //                         </div>
-    //                     </div>
-    //                 </div>
-    //                 <div class="modal-footer">
-    //                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"
-    //                         @click="resetDataAnderrorMessage">
-    //                         取消
-    //                     </button>
+                                    <div class="form-group">
+                                        <label for="description--edit">產品描述</label>
+                                        <textarea id="description--edit" type="text" class="form-control"
+                                            placeholder="請輸入產品描述" v-model="addData.description">
+             </textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="content--edit">說明內容</label>
+                                        <textarea id="content--edit" type="text" class="form-control"
+                                            placeholder="請輸入說明內容" v-model="addData.content">
+             </textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input id="is_enabled--edit" class="form-check-input" type="checkbox"
+                                                :true-value="1" :false-value="0" v-model="addData.is_enabled">
+                                            <label class="form-check-label" for="is_enabled--edit">是否啟用</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"
+                                @click=" $emit('reset-data--error-message'),subProductUrl=''">
+                                取消
+                            </button>
 
-    //                     <!-- :data-bs-dismiss=" typeof errorMessage === 'object'  ?  '' : errorMessage === undefined ? 'modal' : ''  " -->
+                          
 
-    //                     <button v-if="errorMessage.pass === undefined " type="button" class="btn btn-primary"
-    //                         @click="addNewDataConfirm">
-    //                         確認
+                            <button v-if="!errorMessage.pass" type="button" class="btn btn-primary"
+                                @click="$emit('add-data-confirm')">
+                                確認
 
-    //                     </button>
+                            </button>
 
-    //                     <!-- 資料無誤 -->
-    //                     <button v-else-if="errorMessage.pass" type="button" class="btn btn-primary"
-    //                         @click="addNewDataConfirm" data-bs-dismiss="modal">
-    //                         確認
+                          
+                            <button v-else-if="errorMessage.pass" type="button" class="btn btn-primary"
+                                @click="$emit('add-data-confirm',addData),subProductUrl=''" data-bs-dismiss="modal">
+                                確認
 
-    //                     </button>
-    //                     <!-- {{addNewData}} -->
-    //                 </div>
-    //             </div>
-    //         </div>
-    //     </div>
-    // </div>
+                            </button>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        `,
+        beforeUpdate() {
+           this.addData = this.propAddData;
+        },
+        created() {
+            this.subProductUrl = '';
+            this.addData = this.propAddData;
+        
+        },
+        updated() {
+   this.errorMessage =  this.propErrorMessage;
+           // this.errorMessage = this.errorMessage
+            console.log('788', this.editData, this.subProductUrl);
 
-    //     `,
-    //     created() {
-    //         this.addData = this.propAddData
-    //         this.subProductUrl = this.propSubProductUrl
-    //     }
+        },
 
-    // })
+        watch: {
+            // 建立新的產品 --> 表單驗證 ---> 更新 this.errorMessage --> 切換確認按鈕 
+            addData: {
+                handler(newValue, oldValue) {
+                    console.log(newValue, oldValue);
+                    //  console.log('wateched !!!', newValue, oldValue);
+                    const error = this.formVadidate() || {};
+                    console.log(error);
+
+                    this.errorMessage = {}
+                    console.log();
+                 console.log( Object.keys(newValue),error);
+                    // Object.keys(newValue).forEach((i, index, arr) => {
+                    //     console.log(newValue[i], "|", error[i]);
+                    //  this.errorMessage[i] = String (error[i])  ;
+                    // });
+
+                    Object.keys(newValue).forEach((element, index, arr) => {
+                        console.log(newValue[element], "|", error[element]);
+                        console.log(Boolean(newValue[element]));
+                        if (newValue[element] !== "" && error[element]) {
+                            // 如果 表單有填值 且 表單驗證有錯誤
+                            this.errorMessage[element] = String(error[element])
+                        } else if (newValue[element] === '') {
+                            // 如果 表單原本有填值，但把內容清空
+                            this.errorMessage[element] = ''
+                        } else {
+                            // 如果表單沒有錯誤，就將該欄位清空
+                            this.errorMessage[element] = ''
+                        }
+
+                    });
+
+                    console.log(Object.entries(error).length === 0);
+                    if (Object.entries(error).length === 0) {
+                        this.errorMessage.pass = true
+                    } else {
+                        this.errorMessage.pass = false
+                    }
+
+
+                },
+                deep: true,
+                immediate: false
+
+            },
+            // 新增附圖
+            propSubProductUrl: {
+                handler() {
+                    this.subProductUrl = this.propSubProductUrl
+                }
+            },
+            errorMessage: {
+                handler() {
+                  this.errorMessage = this.propErrorMessage
+                },   deep: true,
+                immediate: false
+            }
+        }
+    })
     // 編輯產品 
     .component('edit-product-modal', {
         props: ['propEditData', 'propSubProductUrl', 'formVadidate'],
         data() {
             return {
-                editData: {},
+                editData: {
+                    imageUrl: ''
+                },
                 subProductUrl: '',
 
                 errorMessage: {
 
                 }
             }
-            //   this.editData = this.propEditData;
-            //   this.subProductUrl = this.propSubProductUrl;
-            /// test
-            // this.tempSubProductUrl= this.subProductUrl
         },
         methods: {
 
@@ -796,54 +877,54 @@ createApp({
         
         `,
         created() {
-            this.subProductUrl ='';
+            this.subProductUrl = '';
         },
         updated() {
-            // console.log('785', this.propSubProductUrl);
             this.editData = this.propEditData;
-            //    this.subProductUrl = this.propSubProductUrl;
-
-            //     this.editData.imagesUrl =  [...this.editData.imagesUrl]  
-
             console.log('788', this.editData, this.subProductUrl);
-
         },
-
         watch: {
             // 建立新的產品 --> 表單驗證 ---> 更新 this.errorMessage --> 切換確認按鈕 
             editData: {
                 handler(newValue, oldValue) {
-
                     //  console.log('wateched !!!', newValue, oldValue);
                     const error = this.formVadidate() || {};
                     console.log(error);
 
                     this.errorMessage = {}
-
-
-                    Object.keys(error).forEach((items) => {
-                        console.log(this.editData[items]);
-                        // 按下確認前，輸入 input 事件的驗證，
-                        // this.addNewData[items] !== undefined ==> input 有輸入值
-                        // this.addNewData[items] === ''
-                        //
-                        if (this.editData[items] !== undefined || this.editData[items] === '') {
-                            console.log(this.editData[items], 1);
-                            this.errorMessage[items] = String(error[items])
-                            console.log('  this.errorMessage', this.errorMessage);
-
+                    Object.keys(newValue).forEach((element, index, arr) => {
+                        console.log(newValue[element], "|", error[element]);
+                        if (newValue[element] && error[element]) {
+                            // 如果 表單有填值 且 表單驗證有錯誤
+                            this.errorMessage[element] = String(error[element])
+                        } else if (newValue[element] === '') {
+                            // 如果 表單原本有填值，但把內容清空
+                            this.errorMessage[element] = String(error[element])
+                        } else {
+                            // 如果表單沒有錯誤，就將該欄位清空
+                            this.errorMessage[element] = ''
                         }
 
+                    });
+                    // Object.keys(error).forEach((items) => {
+                    //     console.log(this.editData[items]);
+                    //     // 按下確認前，輸入 input 事件的驗證，
+                    //     // this.addNewData[items] !== undefined ==> input 有輸入值
+                    //     // this.addNewData[items] === ''
+                    //     //
+                    //     if (this.editData[items] !== undefined || this.editData[items] === '') {
+                    //         console.log(this.editData[items], 1);
+                    //         this.errorMessage[items] = String(error[items])
+                    //         console.log('  this.errorMessage', this.errorMessage);
 
-                    })
+                    //     }
+                    // })
                     console.log(Object.entries(error).length === 0);
                     if (Object.entries(error).length === 0) {
                         this.errorMessage.pass = true
                     } else {
                         this.errorMessage.pass = false
                     }
-
-
                 },
                 deep: true,
                 immediate: false
@@ -887,13 +968,4 @@ createApp({
         `,
 
     })
-
     .mount("#app");
-
-/*
-  // <ol class="overflow-auto">
-                                //     <li v-for="(item, index) in addData.imagesUrl" :key="index"
-                                //         @click="selectSubImage(item)"> {{item}} </li>
-                                // </ol>
- 
-*/
