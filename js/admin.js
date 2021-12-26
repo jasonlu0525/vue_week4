@@ -144,7 +144,7 @@ createApp({
 
             },
             // //建立新的產品 --> 確認
-            addtDataConfirm() {
+            addtDataConfirm(addData) {
 
                 const error = this.formVadidate();
                 console.log(error);
@@ -158,15 +158,25 @@ createApp({
 
                     // this.addNewData.imagesUrl = this.subProductUrl.collection;
 
-                    this.products.unshift(this.addNewData)
+                    this.products.unshift({
+                        ...addData
+                    });
 
-                    console.log(this.addNewData);
+
 
                     this.Axios('post', `/api/jason/admin/product`, this.addNewData)
 
-
+                    // this.addNewData = {}
                     this.errorMessage = {}
-                    this.addNewData = {}
+                    Object.keys(this.addNewData).forEach((item) => {
+
+                        if (typeof this.addNewData[item] === "object") {
+                            this.addNewData[item] = []
+                        } else {
+                            this.addNewData[item] = ''
+                        }
+
+                    })
                     // myModal.hide()
                 } else {
                     // 表單驗證有錯誤
@@ -439,7 +449,7 @@ createApp({
     })
     // 新增產品
     .component('add-product-modal', {
-        props: ['propAddData', 'propSubProductUrl', 'propErrorMessage', 'formVadidate'],
+        props: ['propAddData', 'propSubProductUrl', '', 'formVadidate'],
         data() {
             return {
                 addData: {
@@ -642,8 +652,8 @@ createApp({
                     this.errorMessage = {}
                     console.log();
                     console.log(Object.keys(newValue), error);
-               
-                 
+
+
                     Object.keys(newValue).forEach((element, index, arr) => {
                         console.log(newValue[element], "|", error[element]);
                         console.log(Boolean(newValue[element]));
@@ -653,14 +663,14 @@ createApp({
                         if (newValue[element] !== "" && error[element] === undefined) {
                             // 如果 表單有填值 且 表單驗證沒有錯誤
                             this.errorMessage[element] = ""
-                          
+
                         } else if (newValue[element] !== '' && error[element]) {
                             // 如果 表單有填值 且 表單驗證有錯誤
                             this.errorMessage[element] = String(error[element])
-                        
+
                         }
 
-                      
+
 
                         // else {
                         //     // 如果表單沒有錯誤，就將該欄位清空

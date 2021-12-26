@@ -68,8 +68,8 @@
                 </tbody>
             </table>
             <pagination class="mt-3" :pages-num="pagination" @change-page="$emit_pagination"></pagination>
-
-            <add-product-modal :prop-error-message="errorMessage"  :prop-add-data="addNewData" :prop-sub-product-url="subProductUrl"
+            <!-- :prop-error-message="errorMessage" -->
+            <add-product-modal   :prop-add-data="addNewData" :prop-sub-product-url="subProductUrl"
                 @add-image="addMainImg" @remove-image="removeMainImg" @add-sub-image="addSubImg"
                 @select-sub-image="selectSubImage" @remove-sub-image="removeSubImg"
                 @reset-data--error-message="resetDataAnderrorMessage" @add-data-confirm="addtDataConfirm"
